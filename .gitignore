@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.env
+
+# Temporary files
+static/temp/
+uploads/
+
+# Archives and videos
+*.rar
+*.mp4
+

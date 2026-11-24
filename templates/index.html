@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anomaly Detection Studio</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Firebase Import Map -->
+  <script type="importmap">
+    {
+      "imports": {
+        "firebase/app": "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js",
+        "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js",
+        "firebase/analytics": "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js"
+      }
+    }
+  </script>
+</head>
+<body>
+  <!-- Navigation bar (Visible when authenticated) -->
+  <nav class="app-nav hidden" id="appNav">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <i class="fas fa-shield-halved"></i>
+        <span>Anomaly Detection Studio</span>
+      </div>
+      <div class="nav-user-profile">
+        <span class="user-greeting"><i class="fas fa-user-circle"></i> Welcome, <strong id="navUserName">User</strong></span>
+        <button id="signOutBtn" class="btn-signout"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Firebase Authentication UI Overlay (Visible when not authenticated) -->
+  <div id="authSection" class="auth-section">
+    <div class="auth-blobs-container">
+      <div class="auth-blob auth-blob-1"></div>
+      <div class="auth-blob auth-blob-2"></div>
+      <div class="auth-blob auth-blob-3"></div>
+    </div>
+
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-logo">
+          <i class="fas fa-shield-halved"></i>
+        </div>
+        <h2>Anomaly Detection Studio</h2>
+        <p id="authSubtitle">Sign in to access your analytics workspace</p>
+      </div>
+
+      <!-- Alert Message Banner -->
+      <div id="authAlert" class="auth-alert hidden">
+        <i class="fas fa-exclamation-circle alert-icon"></i>
+        <span id="authAlertMsg"></span>
+      </div>
+
+      <!-- Sign In Form -->
+      <form id="signInForm" class="auth-form">
+        <div class="form-group">
+          <label for="signInEmail"><i class="fas fa-envelope"></i> Email Address</label>
+          <input type="email" id="signInEmail" placeholder="name@company.com" required autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label for="signInPassword"><i class="fas fa-lock"></i> Password</label>
+          <div class="password-input-container">
+            <input type="password" id="signInPassword" placeholder="••••••••" required autocomplete="current-password">
+            <button type="button" class="password-toggle" tabindex="-1"><i class="fas fa-eye"></i></button>
+          </div>
+        </div>
+        <div class="form-footer-links">
+          <button type="button" id="forgotPasswordBtn" class="link-btn">Forgot Password?</button>
+        </div>
+        <button type="submit" class="auth-btn">
+          <span class="btn-text">Sign In</span>
+          <div class="auth-spinner hidden"></div>
+        </button>
+      </form>
+
+      <!-- Sign Up Form -->
+      <form id="signUpForm" class="auth-form hidden">
+        <div class="form-group">
+          <label for="signUpName"><i class="fas fa-user"></i> Full Name</label>
+          <input type="text" id="signUpName" placeholder="John Doe" required autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label for="signUpEmail"><i class="fas fa-envelope"></i> Email Address</label>
+          <input type="email" id="signUpEmail" placeholder="name@company.com" required autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label for="signUpPassword"><i class="fas fa-lock"></i> Password (min 6 characters)</label>
+          <div class="password-input-container">
+            <input type="password" id="signUpPassword" placeholder="••••••••" required autocomplete="new-password">
+            <button type="button" class="password-toggle" tabindex="-1"><i class="fas fa-eye"></i></button>
+          </div>
+        </div>
+        <button type="submit" class="auth-btn">
+          <span class="btn-text">Create Account</span>
+          <div class="auth-spinner hidden"></div>
+        </button>
+      </form>
+
+      <!-- Forgot Password Form -->
+      <form id="forgotForm" class="auth-form hidden">
+        <div class="form-group">
+          <label for="forgotEmail"><i class="fas fa-envelope"></i> Email Address</label>
+          <input type="email" id="forgotEmail" placeholder="name@company.com" required autocomplete="email">
+        </div>
+        <div class="flex gap-4">
+          <button type="button" id="backToSignInBtn" class="auth-btn btn-secondary flex-grow">Back</button>
+          <button type="submit" class="auth-btn flex-grow">
+            <span class="btn-text">Send Reset Link</span>
+            <div class="auth-spinner hidden"></div>
+          </button>
+        </div>
+      </form>
+
+      <div class="auth-footer" id="authSwitchContainer">
+        <p id="authSwitchText">Don't have an account? <button type="button" id="switchToSignUp" class="link-btn font-semibold">Sign Up</button></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Application Content Wrapper -->
+  <div id="appContent" class="hidden">
+    <header class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>Anomaly Detection Studio</h1>
+      <p>Compare supervised and unsupervised models across datasets</p>
+    </div>
+  </header>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <h2>Why Choose This Studio?</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>Flexible Model Comparison</h3>
+        <p>Seamlessly switch between supervised and unsupervised models to compare results and identify the most effective solution for your dataset.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Automatic Preprocessing</h3>
+        <p>The system automatically handles missing values, categorical encoding, and feature scaling, saving you time and ensuring consistency.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Fusion Logic</h3>
+        <p>Majority voting ensemble combines predictions from multiple models to improve overall detection accuracy and reduce false positives.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Interactive Visual Results</h3>
+        <p>Visualize performance metrics, confusion matrices, anomaly scatter plots, and heatmaps with easy export functionality.</p>
+      </div>
+    </div>
+  </section>
+
+  <main class="container">
+    <div class="card mb-4">
+      <h2 class="text-xl font-semibold mb-4">Analysis Configuration</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label for="fileUpload" class="block mb-2">Upload Datasets (.csv/.json)</label>
+          <input type="file" id="fileUpload" accept=".csv,.json" multiple class="w-full">
+        </div>
+        <div>
+          <label for="targetColumn" class="block mb-2">Target Column (Required for Supervised)</label>
+          <input type="text" id="targetColumn" class="w-full" placeholder="Enter target column name">
+        </div>
+		<div class="threshold-mode">
+		  <label><input type="radio" name="thresholdMode" value="contamination" checked> Fixed Contamination</label>
+		  <label><input type="radio" name="thresholdMode" value="auto"> Auto Threshold</label>
+		</div>
+      </div>
+
+      <div class="mt-4">
+        <span class="block mb-2">Select Models</span>
+        <div class="model-grid">
+          
+          <!-- Unsupervised Models -->
+          <div class="model-section">
+            <h3 class="model-section-title">Unsupervised Models</h3>
+            <label class="model-checkbox">
+              <input type="checkbox" name="model" value="isolation_forest">
+              <span>Isolation Forest</span>
+            </label>
+            <label class="model-checkbox">
+              <input type="checkbox" name="model" value="autoencoder">
+              <span>Autoencoder</span>
+            </label>
+          </div>
+
+          <!-- Supervised Models -->
+          <div class="model-section">
+            <h3 class="model-section-title">Supervised Models</h3>
+            <label class="model-checkbox">
+              <input type="checkbox" name="model" value="random_forest">
+              <span>Random Forest</span>
+            </label>
+            <label class="model-checkbox">
+              <input type="checkbox" name="model" value="lightgbm">
+              <span>LightGBM</span>
+            </label>
+            <label class="model-checkbox">
+              <input type="checkbox" name="model" value="deep_learning">
+              <span>Deep Neural Network</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div id="contaminationSection" class="form-group mt-4 hidden">
+        <label for="contamination" class="block mb-2">Contamination (Unsupervised Only):</label>
+        <div class="flex gap-2">
+          <input type="number" id="contamination" name="contamination" 
+                min="0" max="1" step="0.01" 
+                placeholder="Auto detection" class="flex-grow">
+          <button type="button" id="autoContam" class="btn btn-secondary">Use Auto</button>
+        </div>
+      </div>
+
+      <div id="uploadPreview" class="mt-2 text-green-400 hidden"></div>
+      <div class="flex gap-4 items-center mt-4">
+        <button id="analyzeBtn" class="btn btn-primary flex-grow">
+          <span class="btn-text">Analyze</span>
+          <div class="loading-spinner hidden"></div>
+        </button>
+        <button id="cancelBtn" class="btn btn-danger hidden">Cancel</button>
+      </div>
+      <div id="error" class="mt-4 p-3 bg-red-500/10 border-l-4 border-red-500 rounded-lg hidden"></div>
+    </div>
+
+    <div id="results" class="hidden" aria-live="polite">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold">Analysis Results</h2>
+        <div class="flex gap-2">
+          <button id="exportBtn" class="btn btn-primary">Export CSV</button>
+          <button id="exportJsonBtn" class="btn btn-secondary">Export JSON</button>
+        </div>
+      </div>
+
+      <!-- Dataset info bar -->
+      <div id="datasetInfoBar" class="dataset-info-bar hidden"></div>
+
+		<div id="downloadSection" class="hidden">
+		  <button id="downloadBtn">Download Preprocessed CSV</button>
+		</div>
+
+      <!-- Comparison Chart -->
+      <div class="results-section-title">Normal vs Anomalous Samples</div>
+      <div id="comparisonChart" class="chart-container"></div>
+
+      <!-- Metrics Chart (F1, Precision, Recall, Accuracy) -->
+      <div id="metricsChartSection" class="hidden">
+        <div class="results-section-title">Performance Metrics Comparison</div>
+        <div id="metricsChart" class="chart-container"></div>
+      </div>
+
+      <!-- Fusion Result -->
+      <div id="fusionSection" class="hidden">
+        <div class="results-section-title"><i class="fas fa-layer-group"></i> Fusion Logic Result (Majority Voting)</div>
+        <div id="fusionResult" class="fusion-card"></div>
+      </div>
+
+      <!-- Anomaly Scatter Plot (per feature) -->
+      <div id="scatterSection" class="hidden">
+        <div class="results-section-title">Anomaly Scatter Plot</div>
+        <div class="scatter-controls">
+          <label>File: <select id="scatterFileSelect" class="inline-select"></select></label>
+          <label>Model: <select id="scatterModelSelect" class="inline-select"></select></label>
+        </div>
+        <div id="scatterChart" class="chart-container-tall"></div>
+      </div>
+
+      <!-- Heatmap (confusion matrix) -->
+      <div id="heatmapSection" class="hidden">
+        <div class="results-section-title">Confusion Matrices</div>
+        <div id="confusionMatrices" class="confusion-grid"></div>
+      </div>
+
+      <!-- Detailed Results Table -->
+      <div class="results-section-title">Detailed Results</div>
+      <div id="detailedResults" class="grid gap-4 mt-6"></div>
+
+    </div>
+    <footer class="business-footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3 class="footer-title">Anomaly Detection Studio</h3>
+          <p class="footer-description">Advanced AI-powered anomaly detection platform for enterprise data analysis and insights.</p>
+          <div class="social-links">
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="LinkedIn">
+              <i class="fab fa-linkedin"></i>
+            </a>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="GitHub">
+              <i class="fab fa-github"></i>
+            </a>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Twitter">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="mailto:info@anomalydetection.com" class="social-link" aria-label="Email">
+              <i class="fas fa-envelope"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-section">
+          <h4 class="footer-heading">Features</h4>
+          <ul class="footer-links">
+            <li><a href="#features">Model Comparison</a></li>
+            <li><a href="#features">Auto Preprocessing</a></li>
+            <li><a href="#features">Fusion Logic</a></li>
+            <li><a href="#features">Visual Analytics</a></li>
+            <li><a href="#features">Export Reports</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4 class="footer-heading">Business</h4>
+          <ul class="footer-links">
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="#support">Support</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4 class="footer-heading">Statistics</h4>
+          <div class="footer-stats">
+            <div class="stat-item">
+              <span class="stat-number" data-target="1000">0</span>
+              <span class="stat-label">Analyses</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" data-target="500">0</span>
+              <span class="stat-label">Users</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" data-target="99">0</span>
+              <span class="stat-label">% Accuracy</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="footer-bottom-content">
+          <p>&copy; 2026 Anomaly Detection Studio. All rights reserved.</p>
+          <div class="footer-credits">
+            <span>Developed by <span id="codenesthub-text"></span></span>
+            <span class="ceo-name">CEO: <strong>Syed Muhammad Hussnain Bukhari</strong></span>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </main>
+  </div> <!-- Close appContent -->
+
+  <script type="module" src="/static/script.js"></script>
+</body>
+</html>

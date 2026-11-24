@@ -1,0 +1,114 @@
+Anomaly Detection Studio – Setup & Usage Guide
+Prerequisites
+
+Python 3.11 (required)
+
+Windows OS
+
+Basic knowledge of Command Prompt
+
+Project Directory Structure
+
+After installing Python 3.11, place the project files in the C drive using the following structure:
+
+C:\
+ └── ML_Anomaly_Detection
+     ├── app.py
+     ├── requirements.txt
+     ├── templates
+     │   └── index.html
+     └── static
+         ├── script.js
+         └── style.css
+
+
+📌 Note:
+
+Folder names must match exactly (templates, static)
+
+All files listed above are required to run the project successfully
+
+Environment Setup
+
+Open Command Prompt
+
+Navigate to the project directory:
+
+cd C:\ML_Anomaly_Detection
+
+
+Create a virtual environment using Python 3.11:
+
+py -3.11 -m venv .venv
+
+
+Activate the virtual environment:
+
+.venv\Scripts\activate
+
+
+Once activated, you will see:
+
+(.venv) C:\ML_Anomaly_Detection>
+
+Install Dependencies
+
+Install all required Python packages:
+
+pip install -r requirements.txt
+
+
+Wait until all dependencies are installed successfully.
+
+Run the Application
+
+Start the Flask application:
+
+python app.py
+
+
+If everything is configured correctly, you will see output similar to:
+
+ * Serving Flask app 'app'
+ * Debug mode: on
+ WARNING: This is a development server. Do not use it in a production deployment.
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.22:5000
+ Press CTRL+C to quit
+
+Accessing the Application
+
+Open any of the displayed URLs in your browser
+
+Recommended (local machine):
+
+http://127.0.0.1:5000
+
+How to Use the Application
+
+Open the application in your browser
+
+Scroll down to the Dataset Upload section
+
+Upload your dataset:
+
+If the dataset is labeled, provide the target column name
+
+If it is unlabeled, leave the target field empty
+
+Select one or more anomaly detection models (multiple selection supported)
+
+Click Analyze
+
+Wait for the analysis to complete
+
+⏱ Processing time depends on dataset size
+
+Once completed, results will be displayed on the screen.
+
+About the Company
+
+This project is developed and maintained by CodeNest Tech Solutions.
+
+🌐 Website:
+👉 https://codenesthub.vercel.app/
