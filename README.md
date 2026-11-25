@@ -1,6 +1,18 @@
-# Anomaly Detection Studio
+<!-- styled:v2 -->
+<div align="center">
 
-A powerful web-based platform for detecting anomalies in datasets using both supervised and unsupervised machine learning models. This application allows you to upload your data, select multiple models, and compare their performance in one place.
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:1d1726,50:167dfe,100:9533fa&height=180&section=header&text=Anomaly%20Detection%20Studio&fontSize=38&fontColor=ffffff&fontAlignY=36&desc=Open-source%20project&descAlignY=58&descSize=16&animation=fadeIn" width="100%" alt="Anomaly Detection Studio" />
+
+**A powerful web-based platform for detecting anomalies in datasets using both supervised and unsupervised machine learning models. This application allows you to upload your data, select multiple models, and compare their performance in one place.**
+
+
+<p>
+  <a href="#features">Features</a>
+</p>
+
+</div>
+
+---
 
 ## 📋 Table of Contents
 
@@ -409,3 +421,19 @@ For issues, questions, or feature requests, please contact CodeNest Tech Solutio
 ## Sample data
 
 `Dataset/bankstatements.csv` is a sample bank-statement dataset for trying the app. Payee names are anonymised (`PAYEE_001` and so on).
+
+---
+
+<div align="center">
+
+**Built by [Ch Muhammad Samiullah](https://github.com/samiullah156-creator)** · AI Automation Engineer and Full-Stack Developer at [Lexvaxa](https://lexvaxa.com)
+
+<a href="https://github.com/samiullah156-creator"><img src="https://img.shields.io/badge/More%20projects-181717?style=for-the-badge&logo=github&logoColor=white" alt="More projects" /></a>
+<a href="https://lexvaxa.com/contact"><img src="https://img.shields.io/badge/Work%20with%20me-167dfe?style=for-the-badge&logo=googlecalendar&logoColor=white" alt="Work with me" /></a>
+<a href="https://www.linkedin.com/in/sami-lexvaxa/"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" /></a>
+
+<sub>⭐ Star this repo if you found it useful</sub>
+
+</div>
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:9533fa,50:167dfe,100:1d1726&height=110&section=footer" width="100%" alt="" />
